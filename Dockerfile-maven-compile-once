@@ -1,0 +1,22 @@
+# Imagen base de la cual parte nuestra imagen personalizada
+FROM maven:3.6.0-jdk-8-alpine
+
+# Copiamos el fichero que contiene la informacion del proyecto
+COPY pom.xml /tmp/
+
+# Copiamos el codigo de la aplicacion
+COPY src /tmp/src/
+
+# Cambiamos el directorio donde ejecutaremos las instrucciones
+WORKDIR /tmp/
+
+# No expone el puerto, vale a modo de documentacion para hacer saber a
+# quien ejecute la imagen que puertos estan destinados a estar publicados
+EXPOSE 8080
+
+# Se ejecuta solo durante la generacion de la imagen
+RUN mvn package
+
+# Se ejecuta de cada vez que se levanta el contenedor
+# Solo puede haber un CMD por Dockerfile
+CMD ["java", "-jar", "-Dspring.profiles.active=local", "./target/demo-docker-0.0.1-SNAPSHOT.jar"]
